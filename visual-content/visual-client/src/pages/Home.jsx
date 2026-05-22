@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPins, setFeedLoading } from "../app/feedSlice";
 import axiosInstance from "../api/axios";
@@ -16,6 +16,47 @@ const Home = () => {
   const feedLoading = useSelector((state) => state.feed.feedLoading);
   const searchQuery = useSelector((state) => state.feed.searchQuery);
   const activeCategory = useSelector((state) => state.feed.activeCategory);
+
+  // Infinite Scroll Pagination states
+  const [visibleCount, setVisibleCount] = useState(12);
+  const [isScrollingLoader, setIsScrollingLoader] = useState(false);
+  const loadMoreRef = useRef(null);
+
+  // Reset pagination count on search/category change
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [activeCategory, searchQuery]);
+
+  // Infinite Scroll Observer
+  useEffect(() => {
+    if (pins.length <= visibleCount) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && !isScrollingLoader) {
+          setIsScrollingLoader(true);
+          // Smooth simulated loading delay for visual feedback
+          setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + 8, pins.length));
+            setIsScrollingLoader(false);
+          }, 600);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [pins.length, visibleCount, isScrollingLoader]);
 
   // Load Pins feed on query updates
   useEffect(() => {
@@ -85,10 +126,26 @@ const Home = () => {
 
               {/* Masonry Layout Grid */}
               <MasonryGrid>
-                {pins.map((pin) => (
+                {pins.slice(0, visibleCount).map((pin) => (
                   <PinCard key={pin._id} pin={pin} />
                 ))}
               </MasonryGrid>
+
+              {/* Infinite Scroll Anchor & Loader */}
+              {pins.length > visibleCount && (
+                <div ref={loadMoreRef} className="py-8 flex justify-center w-full">
+                  {isScrollingLoader ? (
+                    <div className="flex space-x-1.5 items-center">
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#E60023] [animation-delay:-0.3s]"></span>
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#E60023] [animation-delay:-0.15s]"></span>
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-[#E60023]"></span>
+                      <span className="text-xs font-semibold text-zinc-500 tracking-wider ml-2">Loading more inspiration...</span>
+                    </div>
+                  ) : (
+                    <div className="h-4"></div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </main>
