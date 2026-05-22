@@ -7,7 +7,7 @@ const Loader = () => {
         <div className="h-4 w-4 animate-bounce rounded-full bg-[#E60023] [animation-delay:-0.15s]"></div>
         <div className="h-4 w-4 animate-bounce rounded-full bg-[#E60023]"></div>
       </div>
-      <span className="text-sm font-semibold tracking-wider text-zinc-400">Loading PinStack...</span>
+      <span className="text-sm font-semibold tracking-wider text-zinc-400">Loading PixelCanvas...</span>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchQuery } from "../../app/feedSlice";
 import { useAuth } from "../../context/AuthContext";
-import { FaPinterest, FaSearch, FaPlus, FaSignOutAlt } from "react-icons/fa";
+import { FaSearch, FaPlus, FaSignOutAlt } from "react-icons/fa";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -33,11 +33,11 @@ const Navbar = () => {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         {/* Brand Logo */}
         <div className="flex items-center space-x-6">
-          <Link to="/" className="flex items-center space-x-2 text-white">
-            <FaPinterest className="h-8 w-8 text-[#E60023] hover:scale-105 transition-transform" />
-            <span className="hidden font-extrabold text-xl tracking-tight sm:block">
-              Pin<span className="text-[#E60023]">Stack</span>
-            </span>
+          <Link
+            to="/"
+            className="text-2xl font-extrabold tracking-tight text-white"
+          >
+            Pixel<span className="text-[#E60023]">Canvas</span>
           </Link>
 
           {/* Navigation Links */}

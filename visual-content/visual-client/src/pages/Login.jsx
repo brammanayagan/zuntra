@@ -34,7 +34,7 @@ const Login = () => {
           <FaPinterest className="h-11 w-11 text-[#E60023]" />
         </div>
         <h2 className="mt-4 text-center text-3xl font-extrabold tracking-tight text-white">
-          Welcome to <span className="text-[#E60023]">PinStack</span>
+          Welcome to <span className="text-[#E60023]">PixelCanvas</span>
         </h2>
         <p className="mt-2 text-center text-xs text-zinc-400">
           Find new ideas to try and fuel your visual discoveries

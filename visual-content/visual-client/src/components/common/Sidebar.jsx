@@ -69,9 +69,7 @@ const Sidebar = () => {
 
         <div className="hidden border-t border-zinc-800 pt-6 md:block">
           <p className="px-2 text-xs text-zinc-500">
-            © 2026 PinStack Inc.
-            <br />
-            Designed for professional recruitment evaluation.
+            © 2026 PixelCanvas Inc.
           </p>
         </div>
       </div>

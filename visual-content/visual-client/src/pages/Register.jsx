@@ -46,7 +46,7 @@ const Register = () => {
           <FaPinterest className="h-11 w-11 text-[#E60023]" />
         </div>
         <h2 className="mt-4 text-center text-3xl font-extrabold tracking-tight text-white">
-          Create <span className="text-[#E60023]">PinStack</span> Account
+          Create <span className="text-[#E60023]">PixelCanvas</span> Account
         </h2>
         <p className="mt-2 text-center text-xs text-zinc-400">
           Join us to start curating and sharing your inspirations
