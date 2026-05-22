@@ -1,7 +1,6 @@
 import Pin from "../models/Pin.js";
 import Comment from "../models/Comment.js";
 import User from "../models/User.js";
-import { uploadImage } from "../services/cloudinaryService.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 // @desc    Create a new pin
@@ -15,12 +14,8 @@ export const createPin = asyncHandler(async (req, res) => {
     throw new Error("Please upload an image for the pin");
   }
 
-  // Upload image to Cloudinary or fall back to local disk
-  const imageUrl = await uploadImage(
-    req.file.buffer,
-    req.file.originalname,
-    req.file.mimetype
-  );
+  // Upload image to Cloudinary (attached as req.file.path)
+  const imageUrl = req.file.path;
 
   // Parse tags (tags can be sent as JSON array or comma separated string)
   let parsedTags = [];

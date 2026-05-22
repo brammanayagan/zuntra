@@ -1,7 +1,6 @@
 import User from "../models/User.js";
 import Pin from "../models/Pin.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { uploadImage } from "../services/cloudinaryService.js";
 
 // @desc    Get user profile with populated created and saved pins
 // @route   GET /api/users/:id
@@ -71,13 +70,9 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.bio = bio;
   }
 
-  // Handle avatar upload if present
+  // Handle avatar upload if present (attached as req.file.path)
   if (req.file) {
-    const avatarUrl = await uploadImage(
-      req.file.buffer,
-      req.file.originalname,
-      req.file.mimetype
-    );
+    const avatarUrl = req.file.path;
     user.avatar = avatarUrl;
   }
 

@@ -64,9 +64,6 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
-// Static folder for local uploads fallback
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 // API Base Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/pins", pinRoutes);

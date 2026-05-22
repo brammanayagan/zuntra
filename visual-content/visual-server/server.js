@@ -1,22 +1,8 @@
 import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import app from "./app.js";
 import connectDB from "./config/db.js";
 
-// Load Environment Variables
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Create local uploads directory if it doesn't exist (for fallback)
-const uploadsDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log("Created uploads/ directory for local fallback storage.");
-}
 
 const PORT = process.env.PORT || 5000;
 
