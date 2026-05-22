@@ -70,10 +70,11 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.bio = bio;
   }
 
-  // Handle avatar upload if present (attached as req.file.path)
+  // Handle avatar upload if present (support different multer/storage shapes)
   if (req.file) {
-    const avatarUrl = req.file.path;
-    user.avatar = avatarUrl;
+    const avatarUrl =
+      req.file.path || req.file.location || req.file.secure_url || req.file.url;
+    if (avatarUrl) user.avatar = avatarUrl;
   }
 
   const updatedUser = await user.save();
@@ -139,10 +140,10 @@ export const followToggle = asyncHandler(async (req, res) => {
   if (isFollowing) {
     // Unfollow
     currentUser.following = currentUser.following.filter(
-      (id) => id.toString() !== targetId.toString()
+      (id) => id.toString() !== targetId.toString(),
     );
     targetUser.followers = targetUser.followers.filter(
-      (id) => id.toString() !== currentUserId.toString()
+      (id) => id.toString() !== currentUserId.toString(),
     );
   } else {
     // Follow

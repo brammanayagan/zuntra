@@ -14,8 +14,21 @@ export const createPin = asyncHandler(async (req, res) => {
     throw new Error("Please upload an image for the pin");
   }
 
-  // Upload image to Cloudinary (attached as req.file.path)
-  const imageUrl = req.file.path;
+  // Upload image to Cloudinary (attached in req.file). Support multiple multer storage shapes.
+  const imageUrl =
+    (req.file &&
+      (req.file.path ||
+        req.file.location ||
+        req.file.secure_url ||
+        req.file.url)) ||
+    null;
+
+  if (!imageUrl) {
+    res.status(500);
+    throw new Error(
+      "Image upload failed: no URL returned from storage provider",
+    );
+  }
 
   // Parse tags (tags can be sent as JSON array or comma separated string)
   let parsedTags = [];
@@ -39,7 +52,10 @@ export const createPin = asyncHandler(async (req, res) => {
     postedBy: req.user._id,
   });
 
-  const populatedPin = await Pin.findById(pin._id).populate("postedBy", "username avatar");
+  const populatedPin = await Pin.findById(pin._id).populate(
+    "postedBy",
+    "username avatar",
+  );
 
   res.status(201).json({
     success: true,
@@ -124,7 +140,10 @@ export const deletePin = asyncHandler(async (req, res) => {
   await Comment.deleteMany({ pin: pin._id });
 
   // Remove pin from all users' savedPins list
-  await User.updateMany({ savedPins: pin._id }, { $pull: { savedPins: pin._id } });
+  await User.updateMany(
+    { savedPins: pin._id },
+    { $pull: { savedPins: pin._id } },
+  );
 
   // Delete Pin
   await Pin.findByIdAndDelete(pin._id);
@@ -153,7 +172,9 @@ export const saveToggle = asyncHandler(async (req, res) => {
   if (isSaved) {
     // Unsave
     pin.saves = pin.saves.filter((id) => id.toString() !== userId.toString());
-    user.savedPins = user.savedPins.filter((id) => id.toString() !== pin._id.toString());
+    user.savedPins = user.savedPins.filter(
+      (id) => id.toString() !== pin._id.toString(),
+    );
   } else {
     // Save
     pin.saves.push(userId);
@@ -230,7 +251,10 @@ export const addComment = asyncHandler(async (req, res) => {
   await pin.save();
 
   // Populate user info for immediate response
-  const populatedComment = await Comment.findById(comment._id).populate("user", "username avatar");
+  const populatedComment = await Comment.findById(comment._id).populate(
+    "user",
+    "username avatar",
+  );
 
   res.status(201).json({
     success: true,

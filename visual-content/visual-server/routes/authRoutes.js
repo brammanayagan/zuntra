@@ -16,7 +16,8 @@ const router = express.Router();
 
 router.post("/register", registerValidationRules, validate, registerUser);
 router.post("/login", loginValidationRules, validate, loginUser);
-router.post("/logout", protect, logoutUser);
+// Allow logout to be called even if token/cookie is missing; handler clears cookie
+router.post("/logout", logoutUser);
 router.get("/me", protect, getMe);
 
 export default router;
