@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useStore from "../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { closePinModal, removePin, setSearchQuery } from "../../app/feedSlice";
 import { useAuth } from "../../context/AuthContext";
 import axiosInstance from "../../api/axios";
 import SaveButton from "./SaveButton";
@@ -9,7 +10,8 @@ import { FaTimes, FaHeart, FaRegHeart, FaArrowCircleDown, FaTrash } from "react-
 import toast from "react-hot-toast";
 
 const PinModal = () => {
-  const { selectedPin, closePinModal, removePin, setSearchQuery } = useStore();
+  const dispatch = useDispatch();
+  const selectedPin = useSelector((state) => state.feed.selectedPin);
   const { user, isAuthenticated } = useAuth();
   const [pinDetails, setPinDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -47,14 +49,14 @@ const PinModal = () => {
         }
       } catch (error) {
         toast.error("Failed to load Pin details");
-        closePinModal();
+        dispatch(closePinModal());
       } finally {
         setLoading(false);
       }
     };
 
     fetchDetails();
-  }, [selectedPin, user, closePinModal]);
+  }, [selectedPin, user, dispatch]);
 
   const handleLike = async () => {
     if (!isAuthenticated) {
@@ -102,8 +104,8 @@ const PinModal = () => {
       const response = await axiosInstance.delete(`/pins/${pinDetails._id}`);
       if (response.data.success) {
         toast.success("Pin deleted!");
-        removePin(pinDetails._id);
-        closePinModal();
+        dispatch(removePin(pinDetails._id));
+        dispatch(closePinModal());
       }
     } catch (error) {
       toast.error("Failed to delete Pin");
@@ -111,8 +113,8 @@ const PinModal = () => {
   };
 
   const handleTagClick = (tag) => {
-    setSearchQuery(tag);
-    closePinModal();
+    dispatch(setSearchQuery(tag));
+    dispatch(closePinModal());
     navigate("/");
   };
 
@@ -136,7 +138,7 @@ const PinModal = () => {
 
   return (
     <div
-      onClick={closePinModal}
+      onClick={() => dispatch(closePinModal())}
       className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/90 backdrop-blur-sm p-4 overflow-y-auto"
     >
       {/* Modal Box */}
@@ -183,7 +185,7 @@ const PinModal = () => {
             </div>
 
             <button
-              onClick={closePinModal}
+              onClick={() => dispatch(closePinModal())}
               className="rounded-full bg-zinc-800 hover:bg-zinc-700 p-2 text-zinc-300 transition-colors"
             >
               <FaTimes className="h-5 w-5" />
@@ -244,7 +246,7 @@ const PinModal = () => {
               <div className="flex items-center justify-between border-t border-b border-zinc-800 py-4">
                 <div
                   onClick={() => {
-                    closePinModal();
+                    dispatch(closePinModal());
                     navigate(`/profile/${pinDetails.postedBy?._id || pinDetails.postedBy}`);
                   }}
                   className="flex items-center space-x-3 cursor-pointer hover:opacity-85 transition-opacity"

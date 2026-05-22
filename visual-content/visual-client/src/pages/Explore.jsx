@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import useStore from "../app/store";
+import { useDispatch } from "react-redux";
+import { setActiveCategory, setSearchQuery } from "../app/feedSlice";
 import Navbar from "../components/common/Navbar";
 import { FaCompass } from "react-icons/fa";
 
@@ -43,12 +44,12 @@ const topics = [
 ];
 
 const Explore = () => {
-  const { setActiveCategory, setSearchQuery } = useStore();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleTopicClick = (tag) => {
-    setActiveCategory(tag);
-    setSearchQuery("");
+    dispatch(setActiveCategory(tag));
+    dispatch(setSearchQuery(""));
     navigate("/");
   };
 

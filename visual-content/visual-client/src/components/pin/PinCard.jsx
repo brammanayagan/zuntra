@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setSelectedPin, removePin } from "../../app/feedSlice";
 import { useAuth } from "../../context/AuthContext";
-import useStore from "../../app/store";
 import SaveButton from "./SaveButton";
 import axiosInstance from "../../api/axios";
 import { FaHeart, FaRegHeart, FaArrowCircleDown, FaTrash } from "react-icons/fa";
@@ -9,7 +10,7 @@ import toast from "react-hot-toast";
 
 const PinCard = ({ pin }) => {
   const { user, isAuthenticated } = useAuth();
-  const { setSelectedPin, removePin } = useStore();
+  const dispatch = useDispatch();
   const [likes, setLikes] = useState(pin.likes || []);
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ const PinCard = ({ pin }) => {
       const response = await axiosInstance.delete(`/pins/${pin._id}`);
       if (response.data.success) {
         toast.success("Pin deleted!");
-        removePin(pin._id);
+        dispatch(removePin(pin._id));
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to delete Pin");
@@ -83,7 +84,7 @@ const PinCard = ({ pin }) => {
 
   return (
     <div
-      onClick={() => setSelectedPin(pin)}
+      onClick={() => dispatch(setSelectedPin(pin))}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative cursor-pointer overflow-hidden rounded-3xl bg-zinc-900 border border-zinc-800 transition-all duration-300 hover:shadow-xl hover:shadow-black/30"

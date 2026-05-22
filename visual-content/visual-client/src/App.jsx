@@ -1,12 +1,15 @@
 import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./app/store";
 import { AuthProvider } from "./context/AuthContext";
 import AppRoutes from "./routes/AppRoutes";
 import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
+    <Provider store={store}>
+      <BrowserRouter>
+        <AuthProvider>
         {/* Visual hot notifications beautifully matched to zinc/dark interface */}
         <Toaster
           position="bottom-right"
@@ -37,7 +40,8 @@ function App() {
         <AppRoutes />
       </AuthProvider>
     </BrowserRouter>
-  );
+  </Provider>
+);
 }
 
 export default App;

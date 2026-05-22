@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import useStore from "../app/store";
+import { useDispatch } from "react-redux";
+import { addPin } from "../app/feedSlice";
 import axiosInstance from "../api/axios";
 import Navbar from "../components/common/Navbar";
 import { FaCloudUploadAlt, FaTrash } from "react-icons/fa";
@@ -9,7 +10,7 @@ import toast from "react-hot-toast";
 const categories = ["Tech", "Art", "Design", "Nature", "Food", "Travel"];
 
 const Upload = () => {
-  const { addPin } = useStore();
+  const dispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Tech");
@@ -86,7 +87,7 @@ const Upload = () => {
 
       if (response.data.success) {
         toast.success("Pin created successfully!");
-        addPin(response.data.pin);
+        dispatch(addPin(response.data.pin));
         navigate("/");
       }
     } catch (error) {

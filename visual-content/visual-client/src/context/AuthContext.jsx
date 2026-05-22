@@ -1,12 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../api/axios";
-import useStore from "../app/store";
+import { setUser, setToken, logout } from "../app/authSlice";
 import toast from "react-hot-toast";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const { user, setUser, setToken, logout, isAuthenticated } = useStore();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [loading, setLoading] = useState(true);
 
   // Validate session on mount
@@ -21,19 +24,19 @@ export const AuthProvider = ({ children }) => {
       try {
         const response = await axiosInstance.get("/auth/me");
         if (response.data.success) {
-          setUser(response.data.user);
+          dispatch(setUser(response.data.user));
         }
       } catch (error) {
         console.error("Session verification failed:", error);
         // Clear invalid session
-        logout();
+        dispatch(logout());
       } finally {
         setLoading(false);
       }
     };
 
     verifyUser();
-  }, [setUser, logout]);
+  }, [dispatch]);
 
   // Login handler
   const login = async (email, password) => {
@@ -43,8 +46,8 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       if (response.data.success) {
-        setUser(response.data.user);
-        setToken(response.data.token);
+        dispatch(setUser(response.data.user));
+        dispatch(setToken(response.data.token));
         toast.success(`Welcome back, ${response.data.user.username}!`);
         return { success: true };
       }
@@ -64,8 +67,8 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       if (response.data.success) {
-        setUser(response.data.user);
-        setToken(response.data.token);
+        dispatch(setUser(response.data.user));
+        dispatch(setToken(response.data.token));
         toast.success(`Account created! Welcome ${username}!`);
         return { success: true };
       }
@@ -83,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.warn("Logout request failed, clearing local state anyway:", error);
     } finally {
-      logout();
+      dispatch(logout());
       toast.success("Logged out successfully.");
     }
   };

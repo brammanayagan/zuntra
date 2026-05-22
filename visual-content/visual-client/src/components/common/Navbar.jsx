@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setSearchQuery } from "../../app/feedSlice";
 import { useAuth } from "../../context/AuthContext";
-import useStore from "../../app/store";
-import { FaPinterest, FaSearch, FaPlus, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { FaPinterest, FaSearch, FaPlus, FaSignOutAlt } from "react-icons/fa";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
-  const { searchQuery, setSearchQuery } = useStore();
+  const dispatch = useDispatch();
+  const searchQuery = useSelector((state) => state.feed.searchQuery);
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setSearchQuery(localSearch);
+    dispatch(setSearchQuery(localSearch));
     
     // Redirect to home if searching from other pages
     if (location.pathname !== "/") {
@@ -23,7 +25,7 @@ const Navbar = () => {
 
   const handleClearSearch = () => {
     setLocalSearch("");
-    setSearchQuery("");
+    dispatch(setSearchQuery(""));
   };
 
   return (

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import useStore from "../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setPins, setFeedLoading } from "../app/feedSlice";
 import axiosInstance from "../api/axios";
 import Navbar from "../components/common/Navbar";
 import Sidebar from "../components/common/Sidebar";
@@ -10,19 +11,16 @@ import PinModal from "../components/pin/PinModal";
 import { FaRegFrownOpen } from "react-icons/fa";
 
 const Home = () => {
-  const {
-    pins,
-    setPins,
-    feedLoading,
-    setFeedLoading,
-    searchQuery,
-    activeCategory,
-  } = useStore();
+  const dispatch = useDispatch();
+  const pins = useSelector((state) => state.feed.pins);
+  const feedLoading = useSelector((state) => state.feed.feedLoading);
+  const searchQuery = useSelector((state) => state.feed.searchQuery);
+  const activeCategory = useSelector((state) => state.feed.activeCategory);
 
   // Load Pins feed on query updates
   useEffect(() => {
     const fetchPins = async () => {
-      setFeedLoading(true);
+      dispatch(setFeedLoading(true));
       try {
         const params = {};
         if (activeCategory) params.category = activeCategory;
@@ -30,17 +28,17 @@ const Home = () => {
 
         const response = await axiosInstance.get("/pins", { params });
         if (response.data.success) {
-          setPins(response.data.pins);
+          dispatch(setPins(response.data.pins));
         }
       } catch (error) {
         console.error("Failed to load pins feed:", error);
       } finally {
-        setFeedLoading(false);
+        dispatch(setFeedLoading(false));
       }
     };
 
     fetchPins();
-  }, [activeCategory, searchQuery, setPins, setFeedLoading]);
+  }, [activeCategory, searchQuery, dispatch]);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col">

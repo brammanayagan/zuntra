@@ -1,4 +1,5 @@
-import useStore from "../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveCategory, setSearchQuery } from "../../app/feedSlice";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   FaCompass,
@@ -21,13 +22,14 @@ const categories = [
 ];
 
 const Sidebar = () => {
-  const { activeCategory, setActiveCategory, setSearchQuery } = useStore();
+  const dispatch = useDispatch();
+  const activeCategory = useSelector((state) => state.feed.activeCategory);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleCategorySelect = (value) => {
-    setActiveCategory(value);
-    setSearchQuery(""); // Clear search to focus on category
+    dispatch(setActiveCategory(value));
+    dispatch(setSearchQuery("")); // Clear search to focus on category
 
     // Redirect to home if on another page
     if (location.pathname !== "/") {
